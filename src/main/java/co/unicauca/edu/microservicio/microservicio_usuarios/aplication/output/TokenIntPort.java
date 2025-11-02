@@ -7,7 +7,7 @@ import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.Refres
 
 public interface TokenIntPort {
     String generateToken(AuthUser authUser);
-    RefreshToken generateRefreshToken(String userId);
+    RefreshToken generateRefreshToken(String userId, String tenantId);
     boolean validateToken(String token);
     String getUserIdFromToken(String token);
     Optional<RefreshToken> findByToken(String token);

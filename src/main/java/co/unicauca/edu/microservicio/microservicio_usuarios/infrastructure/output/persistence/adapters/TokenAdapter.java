@@ -50,11 +50,14 @@ public class TokenAdapter implements TokenIntPort{
     public String generateToken(AuthUser authUser) {
         Instant now = Instant.now();
 
+        String tenantId = authUser.getTenantId();
+
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("microservicio-usuarios")
                 .issuedAt(now)
                 .expiresAt(now.plus(jwtExpiration))
                 .subject(authUser.getId())
+                .claim("tenant_id", tenantId)
                 .claim("roles", List.of(authUser.getRole().name()))
                 .build();
 
@@ -79,12 +82,13 @@ public class TokenAdapter implements TokenIntPort{
     }
 
     @Override
-    public RefreshToken generateRefreshToken(String userId) {
+    public RefreshToken generateRefreshToken(String userId, String tenantId) {
         this.refreshTokenRepository.deleteByUserId(userId);
         RefreshTokenDocument refreshTokenDocument = new RefreshTokenDocument();
         refreshTokenDocument.setUserId(userId);
         refreshTokenDocument.setExpiryDate(Instant.now().plus(Duration.ofDays(7)));
         refreshTokenDocument.setToken(UUID.randomUUID().toString());
+        refreshTokenDocument.setTenantId(tenantId);
         RefreshTokenDocument saveRefreshTokenDocument = this.refreshTokenRepository.save(refreshTokenDocument);
         return this.modelMapper.map(saveRefreshTokenDocument, RefreshToken.class);
     }

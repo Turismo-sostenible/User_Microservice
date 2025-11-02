@@ -8,6 +8,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Setter
 public class AuthUser {
+    private String tenantId;
     private String id;
     private Role role;
 }

@@ -1,5 +1,7 @@
 package co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.controllers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +14,8 @@ import co.unicauca.edu.microservicio.microservicio_usuarios.aplication.input.Get
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.AuthTokens;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.Login;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.User;
+import co.unicauca.edu.microservicio.microservicio_usuarios.domain.usecases.AuthService;
+import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.config.TenantContext;
 import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.DTORequest.LoginDTORequest;
 import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.DTORequest.RefreshTokenRequest;
 import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.DTORequest.UserDTORequest;
@@ -29,6 +33,8 @@ public class AuthController {
     private final GetPublicKeyIntPort getPublicKeyIntPort;
     private final UserMapperInfrastructureDomain objMapper;
 
+    private final static Logger logger = LoggerFactory.getLogger(AuthController.class);
+
     public AuthController(AuthIntPort authIntPort, GetPublicKeyIntPort getPublicKeyIntPort, UserMapperInfrastructureDomain objMapper) {
         this.authIntPort = authIntPort;
         this.getPublicKeyIntPort = getPublicKeyIntPort;
@@ -38,13 +44,10 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<UserDTOResponse> createUser(@RequestBody UserDTORequest userDTORequest) {
         User user = objMapper.toDomain(userDTORequest);
-        
-        System.out.println("Usuario del controlador: ");
-        System.out.println(user.getName());
-        System.out.println(user.getEmail());
-        System.out.println(user.getRole().name());
 
-        User createdUser = authIntPort.createUser(user);
+        String tenantId = TenantContext.getCurrentTenant();
+
+        User createdUser = authIntPort.createUser(user, tenantId);
         UserDTOResponse userDTOResponse = objMapper.toDTO(createdUser);
         ResponseEntity<UserDTOResponse> response = new ResponseEntity<UserDTOResponse>(userDTOResponse, HttpStatus.CREATED);
         return response;
@@ -53,7 +56,9 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginDTORequest loginDTORequest){
         Login login = objMapper.toDomain(loginDTORequest);
+        logger.info("Controller login INIT");
         AuthTokens token = authIntPort.login(login);
+        logger.info("Controller login SUCCESS");
         AuthResponse authResponse = objMapper.toDTO(token);
         ResponseEntity<AuthResponse> response = new ResponseEntity<AuthResponse>(authResponse, HttpStatus.OK);
         return response;
@@ -62,7 +67,10 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<AuthResponse> refreshToken(@RequestBody RefreshTokenRequest request){
         String refreshToken = request.getRefreshToken();
-        AuthTokens token = authIntPort.refreshToken(refreshToken);
+
+        String tenantId = TenantContext.getCurrentTenant();
+
+        AuthTokens token = authIntPort.refreshToken(refreshToken, tenantId);
         AuthResponse authResponse = objMapper.toDTO(token);
         ResponseEntity<AuthResponse> response = new ResponseEntity<AuthResponse>(authResponse, HttpStatus.OK);
         return response;

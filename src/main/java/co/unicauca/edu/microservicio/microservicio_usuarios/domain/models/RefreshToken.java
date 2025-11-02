@@ -9,6 +9,7 @@ import lombok.Setter;
 
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor
 public class RefreshToken {
+    private String tenantId;
     private String id;
     private String token;
     private String userId;

@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor 
 public class User {
+    private String tenantId;
     private String id;
     private String username;
     private String name;

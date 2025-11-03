@@ -49,7 +49,6 @@ public class AuthService implements AuthIntPort {
         }else if (userManagementPersistenceIntPort.findByEmail(user.getEmail(), tenantId).isPresent()) {
             throw new IllegalArgumentException("El correo ya está en uso.");
         }
-        //TODO: Validar que la restricción del correo no esta funcionando, crea el correo repetido
 
         String encodedPassword = passwordEncoderIntPort.encode(user.getPassword());
         user.setPassword(encodedPassword);
@@ -74,5 +73,7 @@ public class AuthService implements AuthIntPort {
         AuthTokens authTokens = new AuthTokens(newAccesToken, refreshToken);
         return authTokens;
     }
+
+    
     
 }

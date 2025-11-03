@@ -94,8 +94,8 @@ public class TokenAdapter implements TokenIntPort{
     }
 
     @Override
-    public Optional<RefreshToken> findByToken(String token) {
-        Optional<RefreshTokenDocument> refreshTokenDocument = this.refreshTokenRepository.findByToken(token);
+    public Optional<RefreshToken> findByTokenAndTenant(String token, String tenantId) {
+        Optional<RefreshTokenDocument> refreshTokenDocument = this.refreshTokenRepository.findByTokenAndTenantId(token, tenantId);
         return this.modelMapper.map(refreshTokenDocument, new TypeToken<Optional<RefreshToken>>() {}.getType());
     }
 }

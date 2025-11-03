@@ -14,7 +14,6 @@ import co.unicauca.edu.microservicio.microservicio_usuarios.aplication.input.Get
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.AuthTokens;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.Login;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.User;
-import co.unicauca.edu.microservicio.microservicio_usuarios.domain.usecases.AuthService;
 import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.config.TenantContext;
 import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.DTORequest.LoginDTORequest;
 import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.DTORequest.RefreshTokenRequest;
@@ -56,9 +55,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginDTORequest loginDTORequest){
         Login login = objMapper.toDomain(loginDTORequest);
-        logger.info("Controller login INIT");
         AuthTokens token = authIntPort.login(login);
-        logger.info("Controller login SUCCESS");
         AuthResponse authResponse = objMapper.toDTO(token);
         ResponseEntity<AuthResponse> response = new ResponseEntity<AuthResponse>(authResponse, HttpStatus.OK);
         return response;

@@ -24,18 +24,15 @@ public class AuthService implements AuthIntPort {
     }
 
     @Override
-    public AuthTokens login(Login login) {
+    public AuthTokens login(Login login, String tenantId) {
         System.out.println("Entró a login");
-        if (userManagementPersistenceIntPort.userExistsByEmail(login.getEmail())) {
-            Optional<User> userOptional = userManagementPersistenceIntPort.findByEmail(login.getEmail());
+        if (userManagementPersistenceIntPort.userExistsByEmail(login.getEmail(), tenantId)) {
+            Optional<User> userOptional = userManagementPersistenceIntPort.findByEmail(login.getEmail(), tenantId);
             User user = userOptional.get();
             if(!passwordEncoderIntPort.matches(login.getPassword(),user.getPassword())){
                 throw new IllegalArgumentException("Credenciales inválidas.");
             }
 
-            //Se extrae el tenantId del contexto
-            String tenantId = user.getTenantId();
-            System.out.println("\nTenant ID en login: " + tenantId + "\n");
             String token = tokenIntPort.generateToken(new AuthUser(tenantId,user.getId(),user.getRole()));
             RefreshToken refreshToken = tokenIntPort.generateRefreshToken(user.getId(), tenantId);
             AuthTokens authTokens = new AuthTokens(token, refreshToken.getToken());
@@ -47,9 +44,9 @@ public class AuthService implements AuthIntPort {
 
     @Override
     public User createUser(User user, String tenantId) {
-        if (userManagementPersistenceIntPort.userExistsByUsername(user.getUsername())) {
+        if (userManagementPersistenceIntPort.userExistsByUsername(user.getUsername(), tenantId)) {
             throw new IllegalArgumentException("El usuario ya existe.");
-        }else if (userManagementPersistenceIntPort.findByEmail(user.getEmail()).isPresent()) {
+        }else if (userManagementPersistenceIntPort.findByEmail(user.getEmail(), tenantId).isPresent()) {
             throw new IllegalArgumentException("El correo ya está en uso.");
         }
         //TODO: Validar que la restricción del correo no esta funcionando, crea el correo repetido
@@ -63,7 +60,7 @@ public class AuthService implements AuthIntPort {
 
     @Override
     public AuthTokens refreshToken(String refreshToken, String tenantId) {
-        Optional<RefreshToken> refreshTokenOptional = tokenIntPort.findByToken(refreshToken);
+        Optional<RefreshToken> refreshTokenOptional = tokenIntPort.findByTokenAndTenant(refreshToken, tenantId);
         if(refreshTokenOptional.isEmpty()){
             throw new IllegalArgumentException("Token de refresco inválido.");
         }
@@ -72,7 +69,7 @@ public class AuthService implements AuthIntPort {
             throw new IllegalArgumentException("Token de refresco expirado.");
         }
         System.out.println("Si encontro el token de refresco");
-        User user = userManagementPersistenceIntPort.getUserById(token.getUserId()).get();
+        User user = userManagementPersistenceIntPort.getUserById(token.getUserId(), tenantId).get();
         String newAccesToken = tokenIntPort.generateToken(new AuthUser(user.getTenantId(),token.getUserId(), user.getRole()));
         AuthTokens authTokens = new AuthTokens(newAccesToken, refreshToken);
         return authTokens;

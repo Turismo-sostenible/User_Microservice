@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import co.unicauca.edu.microservicio.microservicio_usuarios.aplication.input.UserManagementIntPort;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.User;
+import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.config.TenantContext;
 import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.DTORequest.UserDTORequest;
 import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.DTOResponse.UserDTOResponse;
 import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.mappers.UserMapperInfrastructureDomain;
@@ -31,7 +32,12 @@ public class UserController {
     @PreAuthorize("hasAuthority('ADMINISTRATOR')")
     //@PreAuthorize("hasAnyRole('ADMINISTRATOR','CLIENT')")
     public ResponseEntity<List<UserDTOResponse>> getAllUsers() {
-        List<User> users = userManagementUseCaseIntPort.getAllUsers();
+        //Obtener el contexto del tenant
+        String tenantId = TenantContext.getCurrentTenant();
+        if (tenantId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        List<User> users = userManagementUseCaseIntPort.getAllUsers(tenantId);
         List<UserDTOResponse> userDTOs = objMapper.toDTOList(users);
         return ResponseEntity.ok(userDTOs);
     }
@@ -39,7 +45,12 @@ public class UserController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMINISTRATOR','CLIENT','TOURIST_GUIDE')")
     public ResponseEntity<UserDTOResponse> getUserById(@PathVariable String id) {
-        User user = userManagementUseCaseIntPort.getUserById(id);
+        //Obtener el contexto del tenant
+        String tenantId = TenantContext.getCurrentTenant();
+        if (tenantId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        User user = userManagementUseCaseIntPort.getUserById(id, tenantId);
         UserDTOResponse userDTO = objMapper.toDTO(user);
         return ResponseEntity.ok(userDTO);
     }
@@ -47,8 +58,13 @@ public class UserController {
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMINISTRATOR','CLIENT','TOURIST_GUIDE')")
     public ResponseEntity<UserDTOResponse> updateUser(@PathVariable String id, @RequestBody UserDTORequest userDTORequest) {
+        //Obtener el contexto del tenant
+        String tenantId = TenantContext.getCurrentTenant();
+        if (tenantId == null) {
+            return ResponseEntity.badRequest().build();
+        }
         User user = objMapper.toDomain(userDTORequest);
-        User updatedUser = userManagementUseCaseIntPort.updateUser(id, user);
+        User updatedUser = userManagementUseCaseIntPort.updateUser(id, user, tenantId);
         UserDTOResponse userDTOResponse = objMapper.toDTO(updatedUser);
         return ResponseEntity.ok(userDTOResponse);
     }
@@ -56,7 +72,12 @@ public class UserController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMINISTRATOR')")
     public ResponseEntity<Void> deleteUser(@PathVariable String id) {
-        userManagementUseCaseIntPort.deleteUser(id);
+        //Obtener el contexto del tenant
+        String tenantId = TenantContext.getCurrentTenant();
+        if (tenantId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        userManagementUseCaseIntPort.deleteUser(id, tenantId);
         return ResponseEntity.noContent().build();
     }
     

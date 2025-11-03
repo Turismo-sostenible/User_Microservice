@@ -7,7 +7,9 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.output.persistence.documents.UserDocument;
 
 public interface UserRepository extends MongoRepository<UserDocument, String> {
-    boolean existsByUsername(String username);
-    boolean existsByEmail(String email);
-    Optional<UserDocument> findByEmail(String email);
+    boolean existsByUsernameAndTenantId(String username, String tenantId);
+    boolean existsByEmailAndTenantId(String email, String tenantId);
+    Optional<UserDocument> findByEmailAndTenantId(String email, String tenantId);
+    Optional<UserDocument> findByIdAndTenantId(String id, String tenantId);
+    void deleteByIdAndTenantId(String id, String tenantId);
 }

@@ -10,5 +10,5 @@ public interface TokenIntPort {
     RefreshToken generateRefreshToken(String userId, String tenantId);
     boolean validateToken(String token);
     String getUserIdFromToken(String token);
-    Optional<RefreshToken> findByToken(String token);
+    Optional<RefreshToken> findByTokenAndTenant(String token, String tenantId);
 }

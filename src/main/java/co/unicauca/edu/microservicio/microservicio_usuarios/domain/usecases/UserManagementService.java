@@ -16,14 +16,14 @@ public class UserManagementService implements UserManagementIntPort {
     }
 
     @Override
-    public List<User> getAllUsers() {
-        List<User> users = userManagementIntPort.getAllUsers();
+    public List<User> getAllUsers(String tenantId) {
+        List<User> users = userManagementIntPort.getAllUsers(tenantId);
         return users;
     }
 
     @Override
-    public User getUserById(String id) {
-        Optional<User> userOpt = userManagementIntPort.getUserById(id);
+    public User getUserById(String id, String tenantId) {
+        Optional<User> userOpt = userManagementIntPort.getUserById(id, tenantId);
         if (userOpt.isPresent()) {
             return userOpt.get();
         } else {
@@ -32,8 +32,8 @@ public class UserManagementService implements UserManagementIntPort {
     }
 
     @Override
-    public User updateUser(String id, User user) {
-        Optional<User> existingUserOpt = userManagementIntPort.getUserById(id);
+    public User updateUser(String id, User user, String tenantId) {
+        Optional<User> existingUserOpt = userManagementIntPort.getUserById(id, tenantId);
         if (!existingUserOpt.isPresent()) {
             throw new IllegalArgumentException("Usuario no encontrado con ID: " + id);
         }
@@ -45,15 +45,16 @@ public class UserManagementService implements UserManagementIntPort {
         existingUser.setRole(user.getRole());
         existingUser.setEmail(user.getEmail());
         existingUser.setPassword(user.getPassword());
+        existingUser.setTenantId(tenantId);
         return userManagementIntPort.saveUser(existingUser);
     }
 
     @Override
-    public void deleteUser(String id) {
-        if (!userManagementIntPort.getUserById(id).isPresent()) {
+    public void deleteUser(String id, String tenantId) {
+        if (!userManagementIntPort.getUserById(id, tenantId).isPresent()) {
             throw new IllegalArgumentException("Usuario no encontrado con ID: " + id);
         }
-        userManagementIntPort.deleteUser(id);
+        userManagementIntPort.deleteUser(id, tenantId);
     }
     
 }

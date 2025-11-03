@@ -26,14 +26,14 @@ public class UserManagemenPersistencetImplAdapter implements UserManagementPersi
 
     @Override
     @Transactional
-    public boolean userExistsByUsername(String username) {
-        return userRepository.existsByUsername(username);
+    public boolean userExistsByUsername(String username, String tenantId) {
+        return userRepository.existsByUsernameAndTenantId(username, tenantId);
     }
 
     @Override
     @Transactional
-    public Optional<User> findByEmail(String email) {
-        Optional<UserDocument> userDocument = userRepository.findByEmail(email);
+    public Optional<User> findByEmail(String email, String tenantId) {
+        Optional<UserDocument> userDocument = userRepository.findByEmailAndTenantId(email, tenantId);
         Optional<User> user = modelMapper.map(userDocument, new TypeToken<Optional<User>>() {}.getType());
         return user;
     }
@@ -47,27 +47,27 @@ public class UserManagemenPersistencetImplAdapter implements UserManagementPersi
     }
 
     @Override
-    public List<User> getAllUsers() {
-        Iterable<UserDocument> userDocuments = userRepository.findAll();
+    public List<User> getAllUsers(String tenantId) {
+        Iterable<UserDocument> userDocuments = userRepository.findAllByTenantId(tenantId);
         List<User> users = modelMapper.map(userDocuments, new TypeToken<List<User>>() {}.getType());
         return users;
     }
 
     @Override
-    public Optional<User> getUserById(String id) {
-        Optional<UserDocument> userDocument = userRepository.findById(id);
+    public Optional<User> getUserById(String id, String tenantId) {
+        Optional<UserDocument> userDocument = userRepository.findByIdAndTenantId(id, tenantId);
         Optional<User> user = modelMapper.map(userDocument, new TypeToken<Optional<User>>() {}.getType());
         return user;
     }
 
     @Override
-    public void deleteUser(String id) {
-        this.userRepository.deleteById(id);
+    public void deleteUser(String id, String tenantId) {
+        this.userRepository.deleteByIdAndTenantId(id, tenantId);
     }
 
     @Override
-    public boolean userExistsByEmail(String email) {
-        return userRepository.existsByEmail(email);
+    public boolean userExistsByEmail(String email, String tenantId) {
+        return userRepository.existsByEmailAndTenantId(email, tenantId);
     }
     
 }

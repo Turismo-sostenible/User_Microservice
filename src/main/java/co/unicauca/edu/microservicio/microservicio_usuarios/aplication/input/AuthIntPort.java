@@ -5,7 +5,7 @@ import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.Login;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.User;
 
 public interface AuthIntPort {
-    AuthTokens login(Login login);
+    AuthTokens login(Login login, String tenantId);
     User createUser(User createUser, String tenantId);
     AuthTokens refreshToken(String refreshToken, String tenantId);
 }

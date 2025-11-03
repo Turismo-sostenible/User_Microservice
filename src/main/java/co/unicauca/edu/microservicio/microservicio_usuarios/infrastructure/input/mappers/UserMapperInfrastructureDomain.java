@@ -3,6 +3,7 @@ package co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.inpu
 import java.util.List;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.AuthTokens;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.AuthUser;
@@ -15,6 +16,8 @@ import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input
 
 @Mapper(componentModel = "spring")
 public interface UserMapperInfrastructureDomain {
+    @Mapping(target = "tenantId", ignore = true)
+    @Mapping(target = "id", ignore = true)
     public User toDomain(UserDTORequest userDTO);
 
     public UserDTOResponse toDTO(User user);
@@ -23,6 +26,9 @@ public interface UserMapperInfrastructureDomain {
 
     public Login toDomain(LoginDTORequest loginDTO);
 
+    @Mapping(target = "tenantId", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "role", ignore = true)
     public AuthUser toAuth(LoginDTORequest login);
     
     public AuthResponse toDTO(AuthTokens authUser);

@@ -1,7 +1,5 @@
 package co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.controllers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,8 +30,6 @@ public class AuthController {
     private final GetPublicKeyIntPort getPublicKeyIntPort;
     private final UserMapperInfrastructureDomain objMapper;
 
-    private final static Logger logger = LoggerFactory.getLogger(AuthController.class);
-
     public AuthController(AuthIntPort authIntPort, GetPublicKeyIntPort getPublicKeyIntPort, UserMapperInfrastructureDomain objMapper) {
         this.authIntPort = authIntPort;
         this.getPublicKeyIntPort = getPublicKeyIntPort;
@@ -54,8 +50,11 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginDTORequest loginDTORequest){
+
+        String tenantId = TenantContext.getCurrentTenant();
+
         Login login = objMapper.toDomain(loginDTORequest);
-        AuthTokens token = authIntPort.login(login);
+        AuthTokens token = authIntPort.login(login, tenantId);
         AuthResponse authResponse = objMapper.toDTO(token);
         ResponseEntity<AuthResponse> response = new ResponseEntity<AuthResponse>(authResponse, HttpStatus.OK);
         return response;

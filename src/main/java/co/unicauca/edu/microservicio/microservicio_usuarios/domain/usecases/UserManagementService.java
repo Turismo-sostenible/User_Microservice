@@ -45,6 +45,7 @@ public class UserManagementService implements UserManagementIntPort {
         existingUser.setRole(user.getRole());
         existingUser.setEmail(user.getEmail());
         existingUser.setPassword(user.getPassword());
+        existingUser.setAge(user.getAge());
         existingUser.setTenantId(tenantId);
         return userManagementIntPort.saveUser(existingUser);
     }

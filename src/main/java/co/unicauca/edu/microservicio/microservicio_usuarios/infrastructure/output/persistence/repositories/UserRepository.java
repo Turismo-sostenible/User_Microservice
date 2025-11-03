@@ -1,5 +1,6 @@
 package co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.output.persistence.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -12,4 +13,5 @@ public interface UserRepository extends MongoRepository<UserDocument, String> {
     Optional<UserDocument> findByEmailAndTenantId(String email, String tenantId);
     Optional<UserDocument> findByIdAndTenantId(String id, String tenantId);
     void deleteByIdAndTenantId(String id, String tenantId);
+    List<UserDocument> findAllByTenantId(String tenantId);
 }

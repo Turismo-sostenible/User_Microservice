@@ -9,7 +9,7 @@ import co.unicauca.edu.microservicio.microservicio_usuarios.aplication.output.Us
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.AuthTokens;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.AuthUser;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.Login;
-import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.ChangePassword;
+import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.PasswordChange;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.RefreshToken;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.User;
 
@@ -76,7 +76,7 @@ public class AuthService implements AuthIntPort {
     }
 
     @Override
-    public void changePassword(String userId, String tenantId, ChangePassword request) {
+    public void changePassword(String userId, String tenantId, PasswordChange request) {
         
         User user = userManagementPersistenceIntPort.getUserById(userId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));

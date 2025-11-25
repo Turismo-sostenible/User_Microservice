@@ -51,7 +51,7 @@ public class UserController {
             return ResponseEntity.badRequest().build();
         }
         User user = userManagementUseCaseIntPort.getUserById(id, tenantId);
-        UserDTOResponse userDTO = objMapper.toDTO(user);
+        UserDTOResponse userDTO = objMapper.userToUserDTO(user);
         return ResponseEntity.ok(userDTO);
     }
 
@@ -65,7 +65,7 @@ public class UserController {
         }
         User user = objMapper.toDomain(userDTORequest);
         User updatedUser = userManagementUseCaseIntPort.updateUser(id, user, tenantId);
-        UserDTOResponse userDTOResponse = objMapper.toDTO(updatedUser);
+        UserDTOResponse userDTOResponse = objMapper.userToUserDTO(updatedUser);
         return ResponseEntity.ok(userDTOResponse);
     }
 

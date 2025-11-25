@@ -14,7 +14,7 @@ import com.rabbitmq.client.RpcClient.Response;
 import co.unicauca.edu.microservicio.microservicio_usuarios.aplication.input.AuthIntPort;
 import co.unicauca.edu.microservicio.microservicio_usuarios.aplication.input.GetPublicKeyIntPort;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.AuthTokens;
-import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.ChangePassword;
+import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.PasswordChange;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.Login;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.User;
 import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.config.TenantContext;
@@ -52,7 +52,7 @@ public class AuthController {
         String tenantId = TenantContext.getCurrentTenant();
 
         User createdUser = authIntPort.createUser(user, tenantId);
-        UserDTOResponse userDTOResponse = objMapper.toDTO(createdUser);
+        UserDTOResponse userDTOResponse = objMapper.userToUserDTO(createdUser);
         ResponseEntity<UserDTOResponse> response = new ResponseEntity<UserDTOResponse>(userDTOResponse, HttpStatus.CREATED);
         return response;
     }
@@ -64,7 +64,7 @@ public class AuthController {
 
         Login login = objMapper.toDomain(loginDTORequest);
         AuthTokens token = authIntPort.login(login, tenantId);
-        AuthResponse authResponse = objMapper.toDTO(token);
+        AuthResponse authResponse = objMapper.authTokensToAuthResponse(token);
         ResponseEntity<AuthResponse> response = new ResponseEntity<AuthResponse>(authResponse, HttpStatus.OK);
         return response;
     }
@@ -76,7 +76,7 @@ public class AuthController {
         String tenantId = TenantContext.getCurrentTenant();
 
         AuthTokens token = authIntPort.refreshToken(refreshToken, tenantId);
-        AuthResponse authResponse = objMapper.toDTO(token);
+        AuthResponse authResponse = objMapper.authTokensToAuthResponse(token);
         ResponseEntity<AuthResponse> response = new ResponseEntity<AuthResponse>(authResponse, HttpStatus.OK);
         return response;
     }
@@ -90,7 +90,7 @@ public class AuthController {
 
     @PutMapping("/change-password")
     public ResponseEntity<Map<String, String>> changePassword(@RequestBody ChangePasswordDTORequest request){
-        ChangePassword changePassword = this.objMapper.toDomain(request);
+        PasswordChange changePassword = this.objMapper.toDomain(request);
         this.authIntPort.changePassword(request.getUserId(), request.getTenantId(), changePassword);
         return ResponseEntity.ok(Map.of("message", "Contraseña acutalizada correctamente"));
     }

@@ -7,8 +7,10 @@ import org.mapstruct.Mapping;
 
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.AuthTokens;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.AuthUser;
+import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.ChangePassword;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.Login;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.User;
+import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.DTORequest.ChangePasswordDTORequest;
 import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.DTORequest.LoginDTORequest;
 import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.DTORequest.UserDTORequest;
 import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.DTOResponse.AuthResponse;
@@ -19,7 +21,7 @@ public interface UserMapperInfrastructureDomain {
     @Mapping(target = "tenantId", ignore = true)
     @Mapping(target = "id", ignore = true)
     public User toDomain(UserDTORequest userDTO);
-
+    
     public UserDTOResponse toDTO(User user);
 
     public List<UserDTOResponse> toDTOList(List<User> users);
@@ -32,4 +34,7 @@ public interface UserMapperInfrastructureDomain {
     public AuthUser toAuth(LoginDTORequest login);
     
     public AuthResponse toDTO(AuthTokens authUser);
+
+    public ChangePassword toDomain(ChangePasswordDTORequest changePassword);
+    public ChangePasswordDTORequest toDTO(ChangePassword changePassword);
 }

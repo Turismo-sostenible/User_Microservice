@@ -9,6 +9,7 @@ import co.unicauca.edu.microservicio.microservicio_usuarios.aplication.output.Us
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.AuthTokens;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.AuthUser;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.Login;
+import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.ChangePassword;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.RefreshToken;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.User;
 
@@ -72,6 +73,22 @@ public class AuthService implements AuthIntPort {
         String newAccesToken = tokenIntPort.generateToken(new AuthUser(user.getTenantId(),token.getUserId(), user.getRole()));
         AuthTokens authTokens = new AuthTokens(newAccesToken, refreshToken);
         return authTokens;
+    }
+
+    @Override
+    public void changePassword(String userId, String tenantId, ChangePassword request) {
+        
+        User user = userManagementPersistenceIntPort.getUserById(userId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        if (!passwordEncoderIntPort.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("La contraseña actual es incorrecta.");
+        }
+
+        String newPasswordHash = passwordEncoderIntPort.encode(request.getNewPassword());
+
+        user.setPassword(newPasswordHash);
+        userManagementPersistenceIntPort.saveUser(user);
     }
 
     

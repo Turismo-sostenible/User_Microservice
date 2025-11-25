@@ -1,5 +1,7 @@
 package co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.controllers;
 
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -7,12 +9,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.rabbitmq.client.RpcClient.Response;
+
 import co.unicauca.edu.microservicio.microservicio_usuarios.aplication.input.AuthIntPort;
 import co.unicauca.edu.microservicio.microservicio_usuarios.aplication.input.GetPublicKeyIntPort;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.AuthTokens;
+import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.ChangePassword;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.Login;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.User;
 import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.config.TenantContext;
+import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.DTORequest.ChangePasswordDTORequest;
 import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.DTORequest.LoginDTORequest;
 import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.DTORequest.RefreshTokenRequest;
 import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.DTORequest.UserDTORequest;
@@ -21,6 +27,9 @@ import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input
 import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.DTOResponse.UserDTOResponse;
 import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.mappers.UserMapperInfrastructureDomain;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 
 @RestController
@@ -77,6 +86,13 @@ public class AuthController {
         String key = this.getPublicKeyIntPort.getPublicKey();
         PublicKeyResponse response = new PublicKeyResponse("RSA256", "RSA", key);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<Map<String, String>> changePassword(@RequestBody ChangePasswordDTORequest request){
+        ChangePassword changePassword = this.objMapper.toDomain(request);
+        this.authIntPort.changePassword(request.getUserId(), request.getTenantId(), changePassword);
+        return ResponseEntity.ok(Map.of("message", "Contraseña acutalizada correctamente"));
     }
     
 }

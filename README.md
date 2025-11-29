@@ -67,7 +67,7 @@ docker ps
 El servicio estará disponible en: http://localhost:8080
 
 🔌 Endpoints Principales
-Aquí tienes algunos ejemplos de consumo de la API.
+Aquí tienes algunos ejemplos de consumo de la API basados en los DTOs actuales.
 
 1. Crear un Usuario (Público)
 POST /api/users
@@ -75,10 +75,13 @@ POST /api/users
 JSON
 
 {
-  "username": "usuario_demo",
-  "email": "demo@unicauca.edu.co",
-  "password": "Password123!",
-  "role": "STUDENT"
+  "username": "juanperez",
+  "name": "Juan",
+  "lastName": "Pérez",
+  "age": 22,
+  "email": "juan.perez@unicauca.edu.co",
+  "password": "PasswordSeguro123!",
+  "role": "ADMINISTRATOR"
 }
 2. Obtener Perfil (Requiere Auth)
 GET /api/users/{id} Headers: Authorization: Bearer <tu_token_jwt>

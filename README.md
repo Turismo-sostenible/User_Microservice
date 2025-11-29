@@ -32,7 +32,7 @@ Antes de iniciar, asegúrate de tener instalado:
 
 ### 1. Clonar el repositorio
 ```bash
-git clone [https://github.com/tu-usuario/microservicio_usuarios.git](https://github.com/tu-usuario/microservicio_usuarios.git)
+git clone [[https://github.com/tu-usuario/microservicio_usuarios.git](https://github.com/Turismo-sostenible/User_Microservice.git)]([https://github.com/tu-usuario/microservicio_usuarios.git](https://github.com/Turismo-sostenible/User_Microservice.git))
 cd microservicio_usuarios
 ```
 2. Configurar Variables de Entorno (.env)

@@ -41,7 +41,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                //.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> {
@@ -56,17 +56,18 @@ public class SecurityConfig {
         return http.build();
     }
 
-    /*@Bean
+    @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList(
+        config.setAllowedOriginPatterns(Arrays.asList("*"));
+        /*config.setAllowedOrigins(Arrays.asList(
                 "http://localhost:3000",
-                "https://frontend-santabarbara-m.vercel.app"));
+                "https://frontend-santabarbara-m.vercel.app"));*/
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type","tenant_id"));
         config.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
-    }*/
+    }
 }

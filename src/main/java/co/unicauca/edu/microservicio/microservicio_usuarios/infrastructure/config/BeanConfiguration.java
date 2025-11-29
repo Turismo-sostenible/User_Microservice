@@ -17,8 +17,8 @@ import co.unicauca.edu.microservicio.microservicio_usuarios.domain.usecases.User
 public class BeanConfiguration {
 
     @Bean
-    public UserManagementService createBeanManagementUseCaseAdapter(UserManagementPersistenceIntPort userManagementIntPort){
-        UserManagementService userManagementUseCaseAdapter = new UserManagementService(userManagementIntPort);
+    public UserManagementService createBeanManagementUseCaseAdapter(UserManagementPersistenceIntPort userManagementIntPort, PasswordEncoderIntPort passwordEncoderIntPort){
+        UserManagementService userManagementUseCaseAdapter = new UserManagementService(userManagementIntPort, passwordEncoderIntPort);
         return userManagementUseCaseAdapter;
     }
 

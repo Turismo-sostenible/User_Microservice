@@ -2,6 +2,7 @@ package co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.outp
 
 import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.config.Configuration.AccessLevel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.modelmapper.Converter;
@@ -12,6 +13,12 @@ public class UserMapper {
     @Bean
     public ModelMapper createUserMapper(){
         ModelMapper mapper = new ModelMapper();
+
+        // --- CONFIGURACIÓN PARA ARREGLAR EL LOGIN ---
+        mapper.getConfiguration()
+              .setFieldMatchingEnabled(true) // Permite mapear campos directamente
+              .setFieldAccessLevel(AccessLevel.PRIVATE); // Permite leer atributos privados
+        // ---------------------------------------------
 
         // Conversión de ObjectId -> String
         Converter<ObjectId, String> objectIdToString = ctx ->

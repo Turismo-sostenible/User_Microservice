@@ -30,6 +30,7 @@ public class AuthService implements AuthIntPort {
         if (userManagementPersistenceIntPort.userExistsByEmail(login.getEmail(), tenantId)) {
             Optional<User> userOptional = userManagementPersistenceIntPort.findByEmail(login.getEmail(), tenantId);
             User user = userOptional.get();
+            System.out.println("CONTRASEÑA DE USUARIO ENCONTRADO POR EMAIL: "+user.getPassword());
             if(!passwordEncoderIntPort.matches(login.getPassword(),user.getPassword())){
                 throw new IllegalArgumentException("Credenciales inválidas.");
             }

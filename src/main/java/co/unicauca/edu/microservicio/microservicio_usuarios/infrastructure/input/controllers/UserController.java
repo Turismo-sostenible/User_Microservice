@@ -1,6 +1,7 @@
 package co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.controllers;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -9,8 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.unicauca.edu.microservicio.microservicio_usuarios.aplication.input.UserManagementIntPort;
+import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.PasswordChange;
 import co.unicauca.edu.microservicio.microservicio_usuarios.domain.models.User;
 import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.config.TenantContext;
+import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.DTORequest.ChangePasswordDTORequest;
 import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.DTORequest.UserDTORequest;
 import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.DTOResponse.UserDTOResponse;
 import co.unicauca.edu.microservicio.microservicio_usuarios.infrastructure.input.mappers.UserMapperInfrastructureDomain;
@@ -79,6 +82,14 @@ public class UserController {
         }
         userManagementUseCaseIntPort.deleteUser(id, tenantId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/change-password")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR','CLIENT','TOURIST_GUIDE')")
+    public ResponseEntity<Map<String, String>> changePassword(@RequestBody ChangePasswordDTORequest request){
+        PasswordChange changePassword = this.objMapper.toDomain(request);
+        this.userManagementUseCaseIntPort.changePassword(request.getUserId(), request.getTenantId(), changePassword);
+        return ResponseEntity.ok(Map.of("message", "Contraseña acutalizada correctamente"));
     }
     
 }

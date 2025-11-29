@@ -60,6 +60,8 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginDTORequest loginDTORequest){
 
+        System.out.println("ENTRO AL CONTROLLER/LOGIN");
+
         String tenantId = TenantContext.getCurrentTenant();
 
         Login login = objMapper.toDomain(loginDTORequest);
